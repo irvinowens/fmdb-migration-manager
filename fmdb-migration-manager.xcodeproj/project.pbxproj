@@ -21,6 +21,8 @@
 		31C43B870E72B92C0006AF5D /* FmdbMigrationColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 31C43B850E72B92C0006AF5D /* FmdbMigrationColumn.m */; };
 		31C43B8A0E72C6150006AF5D /* FmdbMigration.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C43B880E72C6150006AF5D /* FmdbMigration.h */; };
 		31C43B8B0E72C6150006AF5D /* FmdbMigration.m in Sources */ = {isa = PBXBuildFile; fileRef = 31C43B890E72C6150006AF5D /* FmdbMigration.m */; };
+		674C69C111AC42F900F4193A /* FmdbSoftMigration.h in Headers */ = {isa = PBXBuildFile; fileRef = 674C69BF11AC42F900F4193A /* FmdbSoftMigration.h */; };
+		674C69C211AC42F900F4193A /* FmdbSoftMigration.m in Sources */ = {isa = PBXBuildFile; fileRef = 674C69C011AC42F900F4193A /* FmdbSoftMigration.m */; };
 		D2AAC0CC05546C4400DB518D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +50,8 @@
 		31C43B890E72C6150006AF5D /* FmdbMigration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FmdbMigration.m; path = Classes/FmdbMigration.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* fmdb-migration-manager_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fmdb-migration-manager_Prefix.pch"; sourceTree = "<group>"; };
 		3AE4FBCB0E764AEB00523542 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		674C69BF11AC42F900F4193A /* FmdbSoftMigration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FmdbSoftMigration.h; sourceTree = "<group>"; };
+		674C69C011AC42F900F4193A /* FmdbSoftMigration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FmdbSoftMigration.m; sourceTree = "<group>"; };
 		D2A6134D07B89F6200DD23D3 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		D2AAC0C705546C1D00DB518D /* fmdb-migration-manager.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "fmdb-migration-manager.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -100,6 +104,8 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				674C69BF11AC42F900F4193A /* FmdbSoftMigration.h */,
+				674C69C011AC42F900F4193A /* FmdbSoftMigration.m */,
 				31C43B880E72C6150006AF5D /* FmdbMigration.h */,
 				31C43B890E72C6150006AF5D /* FmdbMigration.m */,
 				31C43B840E72B92C0006AF5D /* FmdbMigrationColumn.h */,
@@ -190,6 +196,7 @@
 				31C43B710E72AAD80006AF5D /* FmdbMigrationManager.h in Headers */,
 				31C43B860E72B92C0006AF5D /* FmdbMigrationColumn.h in Headers */,
 				31C43B8A0E72C6150006AF5D /* FmdbMigration.h in Headers */,
+				674C69C111AC42F900F4193A /* FmdbSoftMigration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +250,7 @@
 				31C43B720E72AAD80006AF5D /* FmdbMigrationManager.m in Sources */,
 				31C43B870E72B92C0006AF5D /* FmdbMigrationColumn.m in Sources */,
 				31C43B8B0E72C6150006AF5D /* FmdbMigration.m in Sources */,
+				674C69C211AC42F900F4193A /* FmdbSoftMigration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
