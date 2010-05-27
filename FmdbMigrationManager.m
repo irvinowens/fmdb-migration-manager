@@ -12,7 +12,6 @@
 #import "FMResultSet.h"
 #import "FMDatabase.h"
 #import "FMDatabaseAdditions.h"
-#import "FmdbSoftMigration.h"
 
 @implementation FmdbMigrationManager
 
