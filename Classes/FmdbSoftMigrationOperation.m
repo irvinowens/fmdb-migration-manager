@@ -11,4 +11,6 @@
 
 @implementation FmdbSoftMigrationOperation
 
+@synthesize column, doCreateColumn;
+
 @end

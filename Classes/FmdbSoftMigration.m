@@ -15,17 +15,17 @@
 
 + (id)migrationWithDatabaseVersion:(NSUInteger)migrationVersion 
 {
-	self = [[[self alloc] init] autorelease];
-	self.databaseMigrationVersion = migrationVersion;
-	self.schema = [self restoreMigrationDictionaryWithVersion:self.databaseMigrationVersion];
-	if(self.schema == nil)
+	FmdbSoftMigration *migration = (FmdbSoftMigration *)[[[FmdbSoftMigration alloc] init] autorelease];
+	[migration setDatabaseMigrationVersion : migrationVersion];
+	[migration setSchema : [migration restoreMigrationDictionaryWithVersion:migration.databaseMigrationVersion]];
+	if(migration.schema == nil)
 	{
 		NSException *myException = [NSException exceptionWithName:@"NoSchemaByThatVersionArchivedException" 
 														   reason:@"The soft migration could not find a migration dictionary for the given version" 
 														 userInfo:nil];
 		[myException raise];
 	}
-	return self;
+	return migration;
 }
 
 - (id)initAndArchiveSchemaWithDatabase:(FMDatabase *)database andSchema:(NSDictionary *)dbSchema andVersion:(NSUInteger)migrationVersion
@@ -33,6 +33,7 @@
 	if(self = [super initWithDatabase:database])
 	{
 		self.schema = dbSchema;
+		NSLog(@"Schema: %@",self.schema);
 		self.databaseMigrationVersion = migrationVersion;
 		[self archiveMigrationWithDictionary:self.schema andVersion:self.databaseMigrationVersion];
 	}
@@ -187,22 +188,23 @@
 - (void)archiveMigrationWithDictionary:(NSDictionary *)dictionary andVersion:(NSUInteger)version
 {
 	// don't forget to use the NSKeyedUnarchiver below to get it out...
-	NSMutableData *mutableDataHolder = [NSMutableData dataWithLength:10];
-	NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:mutableDataHolder];
 	NSString *pathKey = [NSString stringWithFormat:@"%@.migration",[[NSNumber numberWithInt:version] stringValue]];
-	[archiver encodeObject:dictionary forKey:pathKey];
-	[archiver finishEncoding];
-	[[NSFileManager defaultManager] createFileAtPath:[[self safelyGetMigrationsFolder] stringByAppendingPathComponent:pathKey]
-											contents:mutableDataHolder 
-										  attributes:nil];
-	[archiver release];
-	archiver = nil;
+	BOOL result = [NSKeyedArchiver archiveRootObject:dictionary
+										 toFile:[[self safelyGetMigrationsFolder] stringByAppendingPathComponent:pathKey]];
+	if(result == NO)
+	{
+		NSException *exc = [NSException exceptionWithName:@"ArchiveOperationFailedException" 
+												   reason:@"We failed to create your archive, the migration was not persisted" 
+												 userInfo:nil];
+		[exc raise];
+	}
 }
 
 - (NSDictionary *)restoreMigrationDictionaryWithVersion:(NSUInteger)version
 {
-	NSString *pathKey = [NSString stringWithFormat:@"%@.migration",[[NSNumber numberWithInt:version] stringValue];
-	NSDictionary *dict = (NSDictionary *)[NSKeyedUnarchiver unarchiveObjectWithFile:[[self safelyGetMigrationsFolder] stringByAppendingPathComponent:pathKey];
+	NSString *pathKey = [NSString stringWithFormat:@"%@.migration",[[NSNumber numberWithInt:version] stringValue]];
+	NSDictionary *dict = (NSDictionary *)[NSKeyedUnarchiver unarchiveObjectWithFile:[[self safelyGetMigrationsFolder] stringByAppendingPathComponent:pathKey]];
+	return dict;
 }
 
 - (void)createMigrationArchivingFolderIfNotExists
@@ -219,6 +221,13 @@
 {
 	NSArray *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *userDocsFolderMigrations = [[docsDir objectAtIndex:0] stringByAppendingPathComponent:@"migration_archive"];
+	BOOL migrationArchiveDirectoryExists = NO;
+	[[NSFileManager defaultManager] fileExistsAtPath:userDocsFolderMigrations isDirectory:&migrationArchiveDirectoryExists];
+	if(migrationArchiveDirectoryExists == NO)
+	{
+		NSLog(@"Whoa! The docs directory you are looking for doesn't exist, let me create it for you");
+		[[NSFileManager defaultManager] createDirectoryAtPath:userDocsFolderMigrations attributes:nil];
+	}
 	return userDocsFolderMigrations;
 }
 

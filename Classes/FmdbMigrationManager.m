@@ -6,13 +6,9 @@
 //  Copyright 2008 Mocra and Dr Nic Williams. All rights reserved.
 //
 
-#import "FmdbMigrationManager.h"
-#import "FmdbMigration.h"
-#import "FmdbMigrationColumn.h"
-#import "FMResultSet.h"
-#import "FMDatabase.h"
+#import "FMDatabaseEncryption.h"
 #import "FMDatabaseAdditions.h"
-#import "FmdbSoftMigration.h"
+#import "FmdbMigrationManager.h"
 
 @implementation FmdbMigrationManager
 
@@ -21,6 +17,7 @@
 + (id)executeForDatabasePath:(NSString *)aPath withMigrations:(NSArray *)migrations
 {
 	FmdbMigrationManager *manager = [[[self alloc] initWithDatabasePath:aPath] autorelease];
+	NSLog(@"Manager getting here");
 	manager.migrations = migrations;
 	[manager executeMigrations];
 	return manager;
@@ -67,12 +64,13 @@
 	NSInteger i;
 	for(i = self.currentVersion; i < [self.migrations count]; ++i) 
 	{
+		NSLog(@"Migration Occuring With Class: %@",NSStringFromClass([[self.migrations objectAtIndex:i] class]));
 		id migration = nil;
 		if([[self.migrations objectAtIndex:i] isKindOfClass:[FmdbSoftMigration class]])
 		{
 			migration = (FmdbSoftMigration *)[self.migrations objectAtIndex:i];
-			migration.migrationVersion = i;
-			migration.schema = [migration restoreMigrationDictionaryWithVersion:i];
+			[migration setDatabaseMigrationVersion : i];
+			[migration setSchema : [migration restoreMigrationDictionaryWithVersion:i]];
 			[migration upWithDatabase:self.db];
 			[self recordVersionStateAfterMigrating:i + 1];
 			currentVersion_ = i + 1;
@@ -132,9 +130,8 @@
 			NSLog(@"error opening the database for migration");
 			return nil;
 		}
-
+		NSLog(@"Initializing database at path: %@",aPath);
 		[self initializeSchemaMigrationsTable];
-
 		currentVersion_ = [db_ intForQuery:[NSString stringWithFormat:@"SELECT version FROM %@", self.schemaMigrationsTableName]];
 		if(currentVersion_ == 0) {
 			NSInteger anyRows = [db_ intForQuery:[NSString stringWithFormat:@"SELECT count(version) FROM %@", self.schemaMigrationsTableName]];
